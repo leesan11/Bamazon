@@ -16,7 +16,7 @@ connection.connect(function(err){
         if(err){throw err};
     })
     connection.query(`CREATE TABLE IF NOT EXISTS products (
-        id INTEGER(10) AUTO_INCREMENT PRIMARY KEY NOT NULL,
+        id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
         product_name TEXT NOT NULL,
         department_name TEXT NOT NULL,
         price DECIMAL(10,2) NOT NULL,
@@ -38,22 +38,21 @@ connection.connect(function(err){
     ];
     connection.query(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES ?`,[arr],function(err,result){
         if(err){throw err};
-        console.log("all 10 products inserted")
-    });
+        console.log("all 10 products inserted");
 
-    connection.query('DELETE from products WHERE id>10;',function(err,result){
-        if(err){throw err};
-        console.log("limited to 10 rows")
-    });
+        connection.query('DELETE from products WHERE id>10;',function(err,result){
+            if(err){throw err};
+            console.log("limited to 10 rows")
 
-    connection.query('SELECT * FROM products',function(err,result,fields){
-        if(err){throw err};
-        console.log(result);
+            connection.query('SELECT * FROM products',function(err,result,fields){
+                if(err){throw err};
+                console.log(result);
+            });
+
+            purchase();
+        });
     });
-    
 });
-purchase();
-
 
 function purchase(){
     inquire.prompt([
@@ -77,7 +76,7 @@ function purchase(){
             if(result[0].stock_quantity<quantity){
                 console.log('Insufficient Quantity!')
             }else{
-                connection.query('UPDATE products SET stock_quantity = '+(parseInt(result[0].stock_quantity)-quantity)+";",function(err,result){
+                connection.query('UPDATE products SET stock_quantity = '+(parseInt(result[0].stock_quantity)-quantity)+" WHERE id ="+chosen+";",function(err,result){
                     if(err){console.log(err)}
                     
                 })
